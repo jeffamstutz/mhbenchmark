@@ -59,14 +59,16 @@ using std::vector;
 #define STATUS_UPDATES 1
 #define FRAME_COUNT    100
 
+extern void save_image(int *pixels, int width, int height, string fname);
+
 
 int main(int argc, const char *argv[])
 {
   // Parse input arguments ////////////////////////////////////////////////////
 
-  if (argc < 2)
+  if (argc < 3)
   {
-    cout << "Usage: benchmark [-i] [input model]" << endl;
+    cout << "Usage: benchmark [-i] [input model] [output image file]" << endl;
     return 1;
   }
 
@@ -74,7 +76,8 @@ int main(int argc, const char *argv[])
 
   bool interactiveMode = argv[1][0] == '-' && argv[1][1] == 'i';
 
-  string inputModel = interactiveMode ? argv[2] : argv[1];
+  string inputModel  = interactiveMode ? argv[2] : argv[1];
+  string outputImage = interactiveMode ? argv[3] : argv[2];
 
 
   // Create the renderer //////////////////////////////////////////////////////
@@ -191,9 +194,9 @@ int main(int argc, const char *argv[])
   auto diag    = bounds.diagonal();
   auto lookat  = bounds.center();
   auto maxdist = Max(fabs(diag[0]), fabs(diag[1]), fabs(diag[2]));
-  osp::vec3f E(lookat[0], lookat[1] - (2.0f * maxdist), lookat[2]);
+  osp::vec3f E(lookat[0], lookat[1] + (2.0f * maxdist), lookat[2]);
   osp::vec3f L(lookat[0]-E[0], lookat[1]-E[1], lookat[2]-E[2]);
-  osp::vec3f U(0.f, 0.f, 1.f);
+  osp::vec3f U(0.f, 0.f, -1.f);
   ospSetVec3f(camera, "pos", E);
   ospSetVec3f(camera, "dir", L);
   ospSetVec3f(camera, "up",  U);
@@ -215,10 +218,23 @@ int main(int argc, const char *argv[])
   cout << "...finished in " << end - start << "s" << endl;
 
 
+  // Save the image to a file /////////////////////////////////////////////////
+
+#if STATUS_UPDATES
+  cout << endl << "--> saving image: " << outputImage << endl;
+#endif
+
+  int *pixels = (int*)ospMapFrameBuffer(fb);
+
+  save_image(pixels, 1024, 1024, outputImage);
+
+  ospUnmapFrameBuffer(pixels, fb);
+
+
   // Cleanup //////////////////////////////////////////////////////////////////
 
 #if STATUS_UPDATES
-  cout << endl << "--> cleaning up" << endl;
+  cout << "--> cleaning up" << endl;
 #endif
 
   ospRelease(renderer);

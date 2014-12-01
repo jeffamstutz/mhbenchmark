@@ -85,6 +85,7 @@ include_directories(
 
 add_executable(${EXEC_NAME}
   main.cc
+  save_image.cc
 )
 
 target_link_libraries(${EXEC_NAME}

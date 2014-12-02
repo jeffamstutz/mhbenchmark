@@ -66,18 +66,22 @@ int main(int argc, const char *argv[])
 {
   // Parse input arguments ////////////////////////////////////////////////////
 
-  if (argc < 3)
+  if (argc < 5)
   {
-    cout << "Usage: benchmark [-i] [input model] [output image file]" << endl;
+    cout << "Usage: benchmark [input model] [width] [height] [output image file]"
+		 << endl;
     return 1;
   }
 
   ospInit(&argc, argv);
 
-  bool interactiveMode = argv[1][0] == '-' && argv[1][1] == 'i';
+  string inputModel  = argv[1];
+  string width       = argv[2];
+  string height      = argv[3];
+  string outputImage = argv[4];
 
-  string inputModel  = interactiveMode ? argv[2] : argv[1];
-  string outputImage = interactiveMode ? argv[3] : argv[2];
+  int w = atoi(width.c_str());
+  int h = atoi(height.c_str());
 
 
   // Create the renderer //////////////////////////////////////////////////////
@@ -92,7 +96,7 @@ int main(int argc, const char *argv[])
   ospCommit(camera);
   ospSetObject(renderer, "camera", camera);
 
-  OSPFrameBuffer fb = ospNewFrameBuffer(osp::vec2i(1024, 1024), OSP_RGBA_I8);
+  OSPFrameBuffer fb = ospNewFrameBuffer(osp::vec2i(w, h), OSP_RGBA_I8);
 
 
   // Load the model ///////////////////////////////////////////////////////////
@@ -200,7 +204,7 @@ int main(int argc, const char *argv[])
   ospSetVec3f(camera, "pos", E);
   ospSetVec3f(camera, "dir", L);
   ospSetVec3f(camera, "up",  U);
-  ospSetf(    camera, "aspect", 1.f);
+  ospSetf(    camera, "aspect", static_cast<float>(w)/h);
   ospCommit(  camera);
 
 
@@ -213,9 +217,14 @@ int main(int argc, const char *argv[])
   for (auto i = 0; i < FRAME_COUNT; ++i)
     ospRenderFrame(fb, renderer);
 
-  double end = omp_get_wtime();
+  double end  = omp_get_wtime();
+  double time = end - start;
+  double fps  = FRAME_COUNT/time;
 
-  cout << "...finished in " << end - start << "s" << endl;
+  cout << "...finished in " << time << "s" << endl;
+  cout << endl;
+  cout << " FPS: " << fps << endl;
+  cout << "MRPS: " << (w*h*fps)/(1024*1024) << endl;
 
 
   // Save the image to a file /////////////////////////////////////////////////
@@ -226,7 +235,7 @@ int main(int argc, const char *argv[])
 
   int *pixels = (int*)ospMapFrameBuffer(fb);
 
-  save_image(pixels, 1024, 1024, outputImage);
+  save_image(pixels, w, h, outputImage);
 
   ospUnmapFrameBuffer(pixels, fb);
 

@@ -86,7 +86,7 @@ int main(int argc, const char *argv[])
   cout << "--> creating renderer" << endl;
 #endif
 
-  OSPRenderer renderer = ospNewRenderer("obj");
+  OSPRenderer renderer = ospNewRenderer("ao1");
 
   OSPCamera camera = ospNewCamera("perspective");
   ospCommit(camera);
@@ -194,7 +194,7 @@ int main(int argc, const char *argv[])
   auto diag    = bounds.diagonal();
   auto lookat  = bounds.center();
   auto maxdist = Max(fabs(diag[0]), fabs(diag[1]), fabs(diag[2]));
-  osp::vec3f E(lookat[0], lookat[1] + (2.0f * maxdist), lookat[2]);
+  osp::vec3f E(lookat[0], lookat[1] + (1.25f * maxdist), lookat[2]);
   osp::vec3f L(lookat[0]-E[0], lookat[1]-E[1], lookat[2]-E[2]);
   osp::vec3f U(0.f, 0.f, -1.f);
   ospSetVec3f(camera, "pos", E);

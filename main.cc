@@ -56,7 +56,7 @@ using std::endl;
 using std::string;
 using std::vector;
 
-#define STATUS_UPDATES 1
+#define STATUS_UPDATES 0
 #define FRAME_COUNT    100
 
 extern void save_image(int *pixels, int width, int height, string fname);

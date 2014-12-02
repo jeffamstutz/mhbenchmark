@@ -55,7 +55,7 @@ find_package(ospray     REQUIRED)
 set(CMAKE_AUTOMOC             ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-std=c++11 -fopenmp ${CMAKE_CXX_FLAGS}")
 
 
 ###############################################################################

@@ -217,7 +217,7 @@ int main(int argc, const char *argv[])
   double start = omp_get_wtime();
 
   for (auto i = 0; i < FRAME_COUNT; ++i)
-    ospRenderFrame(fb, renderer, OSP_FB_COLOR);
+    ospRenderFrame(fb, renderer);
 
   double end  = omp_get_wtime();
   double time = end - start;

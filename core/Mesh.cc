@@ -983,7 +983,7 @@ namespace ato
 
 #if 1
       // XXX(cpg) - fixme!
-      ato::core::io::cerr << "ato::core::Mesh::loadOBJ : Warning - texture coordinate adjustments disabled" << std::endl;
+      //ato::core::io::cerr << "ato::core::Mesh::loadOBJ : Warning - texture coordinate adjustments disabled" << std::endl;
 #else
       // Make sure all texture coordinates are positive
       const uint ntex = in_t.size();

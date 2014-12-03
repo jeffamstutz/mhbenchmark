@@ -90,7 +90,9 @@ int main(int argc, const char *argv[])
   cout << "--> creating renderer" << endl;
 #endif
 
-  OSPRenderer renderer = ospNewRenderer("ao1");
+  ospLoadModule("mhtk");
+
+  OSPRenderer renderer = ospNewRenderer("xray");
 
   OSPCamera camera = ospNewCamera("perspective");
   ospCommit(camera);
@@ -215,7 +217,7 @@ int main(int argc, const char *argv[])
   double start = omp_get_wtime();
 
   for (auto i = 0; i < FRAME_COUNT; ++i)
-    ospRenderFrame(fb, renderer);
+    ospRenderFrame(fb, renderer, OSP_FB_COLOR);
 
   double end  = omp_get_wtime();
   double time = end - start;

@@ -63,6 +63,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 add_definitions(
   ${Qt5Gui_DEFINITIONS}
+  -DOSPRAY_MODULES_DIR=${OSPRAY_BUILD_DIRECTORY}
 )
 
 include_directories(

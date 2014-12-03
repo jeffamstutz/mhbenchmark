@@ -47,7 +47,14 @@ void save_image(int *pixels, int width, int height, string fname)
   QImage image(width, height, QImage::Format_RGB32);
   for (int y = 0; y < height; ++y)
     for (int x = 0; x < width; ++x)
-      image.setPixel(x, y, pixels[y*width+x]);
+    {
+      int ip  = pixels[y*width+x];
+      uchar r = (ip & 0x0000FF) >> 0;
+      uchar g = (ip & 0x00FF00) >> 8;
+      uchar b = (ip & 0xFF0000) >> 16;
+      int op  = (r << 16) | (g << 8) | b;
+      image.setPixel(x, y, op);
+    }
 
   image.save(fname.c_str());
 }

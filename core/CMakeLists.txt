@@ -1,6 +1,8 @@
 
 ###############################################################################
 # Copyright (c) 2014, SURVICE Engineering Company
+# Copyright (c) 2014, Christiaan Gribble <cgribble[]rtvtk org>
+# Copyright (c) 2012, Grove City College
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -15,10 +17,9 @@
 #     the documentation and/or other materials provided with the
 #     distribution.
 #
-#   * Neither the name of SURVICE Engineering Company nor the names of
-#     its contributors may be used to endorse or promote products
-#     derived from this software without specific prior written
-#     permission.
+#   * Neither the name of Grove City College nor the names of its
+#     contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -32,76 +33,82 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-project(mhbenchmark)
+
+###############################################################################
+# libato core library
+
+set(LIBRARY_NAME ato_core)
+
+set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 
 
 ###############################################################################
-# mhbenchmark prerequisites
+# namespace core::io
 
-cmake_minimum_required(VERSION 3.0)
+# directory 'core/io'
+set(COREIO_HEADERS
+  io/BufferedReader.t
+  io/BufferedWriter.t
+  io/Parser.t
+  io/StreamIO.h
+  io/StreamManip.h
+  )
 
-find_package(Qt5Gui    REQUIRED)
+set(COREIO_SOURCES
+  io/StreamIO.cc
+  )
 
-set(OSPRAY_BUILD_DIRECTORY ${CMAKE_BINARY_DIR}/../ospray CACHE PATH "Path to OSPRay build directory")
-set(OSPRAY_SOURCE_DIRECTORY ${CMAKE_SOURCE_DIR}/../ospray CACHE PATH "Path to OSPRay source directory")
+  
+###############################################################################
+# namespace core
+
+set(CORE_HEADERS
+  ato_coreExports.h
+  BBox.h
+  Configuration.h
+  ColorMap.t
+  Exception.h
+  LogStreambuf.t
+  Mesh.h
+  MinMax.t
+  RGB.t
+  TexCoord.h
+  Texture.h
+  TileQueue.h
+  Timer.h
+  Types.h
+  UniformGrid.t
+  Utility.h
+  Volume3D.t
+  )
+
+set(CORE_SOURCES
+  BBox.cc
+  ColorMap.cc
+  Configuration.cc
+  Mesh.cc
+  RGB.cc
+  Texture.cc
+  Timer.cc
+  )
 
 
 ###############################################################################
-# mhbenchmark-specific build options
+# Finish core library
 
-set(CMAKE_AUTOMOC             ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+source_group("core::io Header files" FILES ${COREIO_HEADERS})
+source_group("core::io Source files" FILES ${COREIO_SOURCES})
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -fopenmp ${CMAKE_CXX_FLAGS}")
-
-
-###############################################################################
-# mhbenchmark executable
-
-set(EXEC_NAME benchmark)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-
-add_definitions(
-  ${Qt5Gui_DEFINITIONS}
-)
+source_group("core Header files" FILES ${CORE_HEADERS})
+source_group("core Source files" FILES ${CORE_SOURCES})
 
 include_directories(
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_CURRENT_LIST_DIR}
-  ${OSPRAY_SOURCE_DIRECTORY}
-  ${OSPRAY_SOURCE_DIRECTORY}/ospray
-  ${OSPRAY_SOURCE_DIRECTORY}/ospray/embree/common
-  ${OSPRAY_SOURCE_DIRECTORY}/ospray/include
-)
+  )
 
-add_subdirectory(core)
-add_subdirectory(math)
-
-add_executable(${EXEC_NAME}
-  main.cc
-  save_image.cc
-)
-
-target_link_libraries(${EXEC_NAME}
-  Qt5::Gui
-  ${OSPRAY_BUILD_DIRECTORY}/libospray.so
-  ${OSPRAY_BUILD_DIRECTORY}/libospray_embree.so
-  ato_core
-  ato_math
-)
-
-
-###############################################################################
-# 'make install' target
-
-set(HEADER_DIR  include/libato)
-set(RUNTIME_DIR bin)
-set(LIBRARY_DIR lib)
-set(ARCHIVE_DIR lib)
-
-install(TARGETS ${EXEC_NAME}
-  RUNTIME DESTINATION ${RUNTIME_DIR}
-  LIBRARY DESTINATION ${LIBRARY_DIR}
-  ARCHIVE DESTINATION ${ARCHIVE_DIR}
-)
+add_library(${LIBRARY_NAME}
+  ${COREIO_HEADERS}
+  ${COREIO_SOURCES}
+  ${CORE_HEADERS}
+  ${CORE_SOURCES}
+  )
 

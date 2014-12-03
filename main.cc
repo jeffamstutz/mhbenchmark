@@ -40,8 +40,8 @@
 
 #include <ospray/ospray.h>
 
-#include <libato/core/Mesh.h>
-#include <libato/math/Math.h>
+#include "core/Mesh.h"
+#include "math/Math.h"
 
 #include <omp.h>
 

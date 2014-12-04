@@ -57,7 +57,15 @@ using std::string;
 using std::vector;
 
 #define STATUS_UPDATES 0
-#define FRAME_COUNT    100
+
+// '1' for tracing ambient occlusion images instead of heatmap visualizations
+#define TRACE_AO 0
+
+#if TRACE_AO
+# define FRAME_COUNT 32
+#else
+# define FRAME_COUNT 100
+#endif
 
 extern void save_image(int *pixels, int width, int height, string fname);
 
@@ -114,15 +122,23 @@ int main(int argc, const char *argv[])
   cout << "--> creating renderer" << endl;
 #endif
 
+#if TRACE_AO
+  OSPRenderer renderer = ospNewRenderer("ao16");
+#else
   ospLoadModule("mhtk");
-
   OSPRenderer renderer = ospNewRenderer("xray");
+#endif
 
   OSPCamera camera = ospNewCamera("perspective");
   ospCommit(camera);
   ospSetObject(renderer, "camera", camera);
 
+#if TRACE_AO
+  OSPFrameBuffer fb = ospNewFrameBuffer(osp::vec2i(w, h), OSP_RGBA_I8,
+                                        OSP_FB_COLOR | OSP_FB_ACCUM);
+#else
   OSPFrameBuffer fb = ospNewFrameBuffer(osp::vec2i(w, h), OSP_RGBA_I8);
+#endif
 
 
   // Load the model ///////////////////////////////////////////////////////////
@@ -211,6 +227,10 @@ int main(int argc, const char *argv[])
   ospSetObject(renderer, "world", model);
   ospSetObject(renderer, "model", model);
 
+#if TRACE_AO
+  ospSetf(renderer, "aoRayLength", 2.0f);
+#endif
+
   ospCommit(renderer);
 
 
@@ -251,7 +271,11 @@ int main(int argc, const char *argv[])
   double start = omp_get_wtime();
 
   for (auto i = 0; i < FRAME_COUNT; ++i)
+#if TRACE_AO
+    ospRenderFrame(fb, renderer, OSP_FB_COLOR | OSP_FB_ACCUM);
+#else
     ospRenderFrame(fb, renderer);
+#endif
 
   double end  = omp_get_wtime();
   double time = end - start;

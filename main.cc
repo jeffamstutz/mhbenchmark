@@ -68,8 +68,8 @@ int main(int argc, const char *argv[])
 
   if (argc < 5)
   {
-    cout << "Usage: benchmark [input model] [width] [height] [output image file]"
-		 << endl;
+    cout << "Usage: benchmark [input model] [width] [height] "
+         << "[output image file] {-vp x y z -vi x y z -vu x y z}" << endl;
     return 1;
   }
 
@@ -82,6 +82,28 @@ int main(int argc, const char *argv[])
 
   int w = atoi(width.c_str());
   int h = atoi(height.c_str());
+
+  float vp[3];
+  float vi[3];
+  float vu[3];
+  bool  defaultView = true;
+
+  if (argc > 5)
+  {
+    vp[0] = atof(argv[6]);
+    vp[1] = atof(argv[7]);
+    vp[2] = atof(argv[8]);
+
+    vi[0] = atof(argv[10]);
+    vi[1] = atof(argv[11]);
+    vi[2] = atof(argv[12]);
+
+    vu[0] = atof(argv[14]);
+    vu[1] = atof(argv[15]);
+    vu[2] = atof(argv[16]);
+
+    defaultView = false;
+  }
 
 
   // Create the renderer //////////////////////////////////////////////////////
@@ -200,9 +222,18 @@ int main(int argc, const char *argv[])
   auto diag    = bounds.diagonal();
   auto lookat  = bounds.center();
   auto maxdist = Max(fabs(diag[0]), fabs(diag[1]), fabs(diag[2]));
-  osp::vec3f E(lookat[0], lookat[1] + (1.25f * maxdist), lookat[2]);
+
+  osp::vec3f E(lookat[0], lookat[1] - (1.25f * maxdist), lookat[2]);
   osp::vec3f L(lookat[0]-E[0], lookat[1]-E[1], lookat[2]-E[2]);
-  osp::vec3f U(0.f, 0.f, -1.f);
+  osp::vec3f U(0.f, 0.f, 1.f);
+
+  if (!defaultView)
+  {
+    E = osp::vec3f(vp[0], vp[1], vp[2]);
+    L = osp::vec3f(vi[0]-vp[0], vi[1]-vp[1], vi[2]-vp[2]);
+    U = osp::vec3f(vu[0], vu[1], vu[2]);
+  }
+
   ospSetVec3f(camera, "pos", E);
   ospSetVec3f(camera, "dir", L);
   ospSetVec3f(camera, "up",  U);

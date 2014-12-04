@@ -53,7 +53,7 @@ void save_image(int *pixels, int width, int height, string fname)
       uchar g = (ip & 0x00FF00) >> 8;
       uchar b = (ip & 0xFF0000) >> 16;
       int op  = (r << 16) | (g << 8) | b;
-      image.setPixel(x, y, op);
+      image.setPixel(x, (height-1)-y, op);
     }
 
   image.save(fname.c_str());

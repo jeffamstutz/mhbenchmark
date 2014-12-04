@@ -69,7 +69,8 @@ int main(int argc, const char *argv[])
   if (argc < 5)
   {
     cout << "Usage: benchmark [input model] [width] [height] "
-         << "[output image file] {-vp x y z -vi x y z -vu x y z}" << endl;
+         << "[output image file] {-vp x y z -vi x y z -vu x y z {-fv fov}}"
+         << endl;
     return 1;
   }
 
@@ -86,6 +87,7 @@ int main(int argc, const char *argv[])
   float vp[3];
   float vi[3];
   float vu[3];
+  float fov = argc > 17 ? atof(argv[18]) : 60.f;
   bool  defaultView = true;
 
   if (argc > 5)
@@ -237,8 +239,9 @@ int main(int argc, const char *argv[])
   ospSetVec3f(camera, "pos", E);
   ospSetVec3f(camera, "dir", L);
   ospSetVec3f(camera, "up",  U);
-  ospSetf(    camera, "aspect", static_cast<float>(w)/h);
-  ospCommit(  camera);
+  ospSetf(  camera, "fovy", fov);
+  ospSetf(  camera, "aspect", static_cast<float>(w)/h);
+  ospCommit(camera);
 
 
   // Trace frames /////////////////////////////////////////////////////////////

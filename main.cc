@@ -284,13 +284,14 @@ int main(int argc, const char *argv[])
   double end  = omp_get_wtime();
   double time = end - start;
   double fps  = FRAME_COUNT/time;
+  double mrps = (w*h*fps)/(1024*1024);
 
   cout << "...finished in " << time << "s" << endl;
   cout << endl;
 
   cout << "-- Timing data --" << endl;
   cout << " FPS: " << fps << endl;
-  cout << "MRPS: " << (w*h*fps)/(1024*1024) << endl;
+  cout << "MRPS: " << mrps << endl;
 
   // Gather and output count data /////////////////////////////////////////////
 
@@ -300,9 +301,11 @@ int main(int argc, const char *argv[])
   // Lanes active count buffer
   int *lanesActive = new int[w*h];
 
+  int *swaps = new int[w*h];
+
   // Initialize buffers
   for (auto i = 0; i < w*h; ++i)
-    intersections[i] = lanesActive[i] = 0;
+    intersections[i] = lanesActive[i] = swaps[i] = 0;
 
   // Add buffers to the renderer
   OSPData ospIntersections = ospNewData(w*h, OSP_INT, intersections,
@@ -312,6 +315,9 @@ int main(int argc, const char *argv[])
   OSPData ospLanes = ospNewData(w*h, OSP_INT, lanesActive,
                                 OSP_DATA_SHARED_BUFFER);
   ospSetData(renderer, "activeLanes", ospLanes);
+
+  OSPData ospSwaps = ospNewData(w*h, OSP_INT, swaps, OSP_DATA_SHARED_BUFFER);
+  ospSetData(renderer, "swaps", ospSwaps);
 
   ospSet1i(renderer, "bufferWidth", w);
 
@@ -324,19 +330,24 @@ int main(int argc, const char *argv[])
   size_t totalIntersections = 0;
   size_t totalLanes         = 0;
   size_t rayHitCount        = 0;
+  size_t totalSwaps         = 0;
   for (auto i = 0; i < w*h; ++i)
   {
-    const int numIntersections = intersections[i];
-    totalIntersections += numIntersections;
-    rayHitCount        += numIntersections > 0 ? 1 : 0;
-    totalLanes         += lanesActive[i] / (float)numIntersections;
+    const int numIs = intersections[i];
+    totalIntersections += numIs;
+    rayHitCount        += (numIs > 0) ? 1 : 0;
+    totalLanes         += static_cast<size_t>((lanesActive[i] /
+                                               static_cast<float>(numIs)));
+    totalSwaps         += static_cast<size_t>(swaps[i]);
   }
 
   cout << endl << "-- Intersection data --" << endl;
-  cout << "Total Intersections: " << totalIntersections << endl;
-  cout << "   AVG lanes active: " << totalLanes/(float)rayHitCount << endl;
   cout << "         Total Rays: " << w*h << endl;
   cout << "           Hit Rays: " << rayHitCount << endl;
+  cout << "Total Intersections: " << totalIntersections << endl;
+  cout << "   AVG lanes active: " << totalLanes/(float)rayHitCount << endl;
+  cout << "          AVG swaps: " << totalSwaps/(float)rayHitCount << endl;
+  cout << "               MIPS: " << fps*totalIntersections/(1024*1024) << endl;
 
   delete [] intersections;
   delete [] lanesActive;

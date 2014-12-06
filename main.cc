@@ -129,17 +129,18 @@ int main(int argc, const char *argv[])
   OSPRenderer renderer = ospNewRenderer("xray");
 #endif
 
+  // OSPRay camera
   OSPCamera camera = ospNewCamera("perspective");
   ospCommit(camera);
   ospSetObject(renderer, "camera", camera);
 
+  // Framebuffer
 #if TRACE_AO
   OSPFrameBuffer fb = ospNewFrameBuffer(osp::vec2i(w, h), OSP_RGBA_I8,
                                         OSP_FB_COLOR | OSP_FB_ACCUM);
 #else
   OSPFrameBuffer fb = ospNewFrameBuffer(osp::vec2i(w, h), OSP_RGBA_I8);
 #endif
-
 
   // Load the model ///////////////////////////////////////////////////////////
 
@@ -277,14 +278,69 @@ int main(int argc, const char *argv[])
     ospRenderFrame(fb, renderer);
 #endif
 
+#if !TRACE_AO
+  // Gather and output timing data ////////////////////////////////////////////
+
   double end  = omp_get_wtime();
   double time = end - start;
   double fps  = FRAME_COUNT/time;
 
   cout << "...finished in " << time << "s" << endl;
   cout << endl;
+
+  cout << "-- Timing data --" << endl;
   cout << " FPS: " << fps << endl;
   cout << "MRPS: " << (w*h*fps)/(1024*1024) << endl;
+
+  // Gather and output count data /////////////////////////////////////////////
+
+  // Intersection count buffer
+  int *intersections = new int[w*h];
+
+  // Lanes active count buffer
+  int *lanesActive = new int[w*h];
+
+  // Initialize buffers
+  for (auto i = 0; i < w*h; ++i)
+    intersections[i] = lanesActive[i] = 0;
+
+  // Add buffers to the renderer
+  OSPData ospIntersections = ospNewData(w*h, OSP_INT, intersections,
+                                        OSP_DATA_SHARED_BUFFER);
+  ospSetData(renderer, "intersections", ospIntersections);
+
+  OSPData ospLanes = ospNewData(w*h, OSP_INT, lanesActive,
+                                OSP_DATA_SHARED_BUFFER);
+  ospSetData(renderer, "activeLanes", ospLanes);
+
+  ospSet1i(renderer, "bufferWidth", w);
+
+  ospCommit(renderer);
+
+  // Trace additional frame to gather data
+  ospRenderFrame(fb, renderer);
+
+  // Sum reduce data and output results
+  size_t totalIntersections = 0;
+  size_t totalLanes         = 0;
+  size_t rayHitCount        = 0;
+  for (auto i = 0; i < w*h; ++i)
+  {
+    const int numIntersections = intersections[i];
+    totalIntersections += numIntersections;
+    rayHitCount        += numIntersections > 0 ? 1 : 0;
+    totalLanes         += lanesActive[i];
+  }
+
+  cout << endl << "-- Intersection data --" << endl;
+  cout << "Total Intersections: " << totalIntersections << endl;
+  cout << "   AVG lanes active: " << totalLanes/(float)rayHitCount << endl;
+  cout << "         Total Rays: " << w*h << endl;
+  cout << "           Hit Rays: " << rayHitCount << endl;
+
+  delete [] intersections;
+  delete [] lanesActive;
+#endif
 
 
   // Save the image to a file /////////////////////////////////////////////////

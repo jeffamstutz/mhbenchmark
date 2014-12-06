@@ -329,7 +329,7 @@ int main(int argc, const char *argv[])
     const int numIntersections = intersections[i];
     totalIntersections += numIntersections;
     rayHitCount        += numIntersections > 0 ? 1 : 0;
-    totalLanes         += lanesActive[i];
+    totalLanes         += lanesActive[i] / (float)numIntersections;
   }
 
   cout << endl << "-- Intersection data --" << endl;

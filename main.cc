@@ -333,11 +333,11 @@ int main(int argc, const char *argv[])
   size_t totalSwaps         = 0;
   for (auto i = 0; i < w*h; ++i)
   {
-    const int numIs = intersections[i];
+    const size_t numIs = static_cast<size_t>(intersections[i]);
+    const size_t numLs = static_cast<size_t>(lanesActive[i]);
     totalIntersections += numIs;
     rayHitCount        += (numIs > 0) ? 1 : 0;
-    totalLanes         += static_cast<size_t>((lanesActive[i] /
-                                               static_cast<float>(numIs)));
+    totalLanes         += static_cast<size_t>(numLs);
     totalSwaps         += static_cast<size_t>(swaps[i]);
   }
 
@@ -345,8 +345,8 @@ int main(int argc, const char *argv[])
   cout << "         Total Rays: " << w*h << endl;
   cout << "           Hit Rays: " << rayHitCount << endl;
   cout << "Total Intersections: " << totalIntersections << endl;
-  cout << "   AVG lanes active: " << totalLanes/(float)rayHitCount << endl;
-  cout << "          AVG swaps: " << totalSwaps/(float)rayHitCount << endl;
+  cout << "   AVG lanes active: " << totalLanes/(double)totalSwaps << endl;
+  cout << "          AVG swaps: " << totalSwaps/(double)rayHitCount << endl;
   cout << "               MIPS: " << fps*totalIntersections/(1024*1024) << endl;
 
   delete [] intersections;

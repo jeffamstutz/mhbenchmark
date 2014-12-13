@@ -50,9 +50,9 @@ echo " "
 echo "-->tank:"
 echo " "
 #./benchmark $1/tank.obj $2 $3 images/tank_$4.png
-./benchmark $1/tank.obj $2 $3 images/tank_$4.png -vp 6084.42 -2333.46 992.238 -vi -3005.57 3496.19 -2070.54 -vu -0.233255 0.141724 0.962032 -fv 42.5
+./benchmark $1/tank.obj $2 $3 images/tank_$4.png -vp 6084.42 -2333.46 992.238 -vi -3005.57 3496.19 -2070.54 -vu -0.233255 0.141724 0.962032 -fv 60.0
 
 echo " "
 echo "-->truck:"
 echo " "
-./benchmark $1/truck.obj $2 $3 images/truck_$4.png -vp 82.057 249.765 263.857 -vi -332.863 -85.7153 -181.053 -vu -0.376625 0.873792 -0.307638 -fv 42.5
+./benchmark $1/truck.obj $2 $3 images/truck_$4.png -vp 82.057 249.765 263.857 -vi -332.863 -85.7153 -181.053 -vu -0.376625 0.873792 -0.307638 -fv 60.0

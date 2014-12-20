@@ -350,6 +350,7 @@ int main(int argc, const char *argv[])
     totalSwaps         += static_cast<size_t>(swaps[i]);
   }
 
+/*
   cout << endl << "-- Intersection data --" << endl;
   cout << "         Total Rays: " << w*h << endl;
   cout << "           Hit Rays: " << rayHitCount << endl;
@@ -357,6 +358,7 @@ int main(int argc, const char *argv[])
   cout << "   AVG lanes active: " << totalLanes/(double)totalSwaps << endl;
   cout << "          AVG swaps: " << totalSwaps/(double)rayHitCount << endl;
   cout << "               MIPS: " << fps*totalIntersections/(1024*1024) << endl;
+*/
 
   delete [] intersections;
   delete [] lanesActive;

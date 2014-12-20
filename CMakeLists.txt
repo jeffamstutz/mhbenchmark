@@ -42,7 +42,7 @@ cmake_minimum_required(VERSION 3.0)
 
 find_package(Qt5Gui    REQUIRED)
 
-set(OSPRAY_BUILD_DIRECTORY ${CMAKE_BINARY_DIR}/../ospray CACHE PATH "Path to OSPRay build directory")
+set(OSPRAY_BUILD_DIRECTORY ${CMAKE_SOURCE_DIR}/../ospray/build CACHE PATH "Path to OSPRay build directory")
 set(OSPRAY_SOURCE_DIRECTORY ${CMAKE_SOURCE_DIR}/../ospray CACHE PATH "Path to OSPRay source directory")
 
 

@@ -256,6 +256,15 @@ int main(int argc, const char *argv[])
     L = osp::vec3f(vi[0]-vp[0], vi[1]-vp[1], vi[2]-vp[2]);
     U = osp::vec3f(vu[0], vu[1], vu[2]);
   }
+  else
+  {
+    cout << "using default view" << endl;
+    cout << "  -vp " << E[0] << ' ' << E[1] << ' ' << E[2]
+         << " -vi "  << L[0] << ' ' << L[1] << ' ' << L[2]
+         << " -vu "  << U[0] << ' ' << U[1] << ' ' << U[2]
+         << " -vf "  << fov
+         << endl;
+  }
 
   ospSetVec3f(camera, "pos", E);
   ospSetVec3f(camera, "dir", L);

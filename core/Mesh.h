@@ -51,7 +51,7 @@
 #include <core/RGB.t>
 #include <core/TexCoord.h>
 
-#include <math/Math.h>
+#include <math/Math_Float.h>
 
 
 namespace ato

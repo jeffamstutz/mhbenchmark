@@ -44,7 +44,7 @@
 #include <core/ato_coreExports.h>
 #include <core/MinMax.t>
 
-#include <math/Math.h>
+#include <math/Math_Float.h>
 
 
 namespace ato

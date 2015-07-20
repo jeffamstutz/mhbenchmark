@@ -45,7 +45,7 @@ set(MATH_HEADERS
   ato_mathExports.h
   Constants.h
   Helpers.t
-  Math.h
+  Math_Float.h
   Matrix.t
   Point.t
   Quaternion.t

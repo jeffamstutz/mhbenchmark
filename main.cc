@@ -41,7 +41,7 @@
 #include <ospray/ospray.h>
 
 #include "core/Mesh.h"
-#include "math/Math.h"
+#include "math/Math_Float.h"
 
 #include <omp.h>
 

@@ -50,7 +50,7 @@
 #include <core/ato_coreExports.h>
 #include <core/Types.h>
 
-#include <math/Math.h>
+#include <math/Math_Float.h>
 
 #ifdef WIN32
 #  undef RGB

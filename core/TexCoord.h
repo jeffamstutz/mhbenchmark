@@ -38,7 +38,7 @@
 #ifndef core_TexCoord_h
 #define core_TexCoord_h
 
-#include <math/Math.h>
+#include <math/Math_Float.h>
 
 
 namespace ato

@@ -42,7 +42,7 @@
 #include <core/Types.h>
 
 #include <math/Helpers.t>
-#include <math/Math.h>
+#include <math/Math_Float.h>
 
 
 namespace ato
